@@ -6,7 +6,13 @@ import json
 import os
 from pathlib import Path
 from typing import Optional, Dict, Any
-from playwright.sync_api import sync_playwright, Page, Browser, BrowserContext
+from playwright.sync_api import (
+    sync_playwright,
+    Page,
+    Browser,
+    BrowserContext,
+    TimeoutError as PlaywrightTimeoutError,
+)
 from loguru import logger
 import time
 import random
@@ -113,21 +119,30 @@ class BrowserManager:
             # Click login button
             login_button = self.page.locator('button[type="submit"]')
             login_button.click()
-            
-            # Wait for navigation
-            self.page.wait_for_url('**/feed**', timeout=30000)
-            time.sleep(random.uniform(2, 4))
-            
-            # Check for CAPTCHA or OTP
-            if self._check_captcha_or_otp():
-                logger.warning("CAPTCHA or OTP detected. Manual intervention required.")
+
+            try:
+                # Wait for navigation to main feed
+                self.page.wait_for_url('**/feed**', timeout=30000)
+                time.sleep(random.uniform(2, 4))
+
+                # Check for CAPTCHA or OTP even after successful navigation
+                if self._check_captcha_or_otp():
+                    logger.warning("CAPTCHA or OTP detected after login. Manual intervention required.")
+                    return False
+
+                # Save cookies after successful login
+                self.save_cookies()
+                logger.info("Login successful")
+                return True
+
+            except PlaywrightTimeoutError:
+                # We timed out waiting for the feed - see if we hit a challenge page
+                if self._check_captcha_or_otp():
+                    logger.error("Login failed due to CAPTCHA/OTP challenge. Please complete it manually.")
+                else:
+                    logger.error("Login failed: timeout waiting for LinkedIn feed.")
                 return False
-            
-            # Save cookies after successful login
-            self.save_cookies()
-            logger.info("Login successful")
-            return True
-            
+
         except Exception as e:
             logger.error(f"Login failed: {e}")
             return False
