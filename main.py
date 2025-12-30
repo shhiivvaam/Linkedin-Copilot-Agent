@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Dict, Any, Optional
 from loguru import logger
+from dotenv import load_dotenv
+load_dotenv()
 
 from browser_automation import BrowserManager
 from recruiter_discovery import RecruiterSearch, RecruiterRanker

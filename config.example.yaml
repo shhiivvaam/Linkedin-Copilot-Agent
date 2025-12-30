@@ -3,9 +3,9 @@
 
 linkedin:
   # Credentials (or use environment variables)
-  email: "your_email@example.com"
-  password: "your_password"
-  
+  email: ${LINKEDIN_EMAIL} # Loaded from .env
+  password: ${LINKEDIN_PASSWORD} # Loaded from .env
+
   # Session persistence
   session_dir: "./sessions"
   cookies_file: "./sessions/linkedin_cookies.json"
@@ -32,7 +32,7 @@ recruiter_discovery:
   locations:
     - "United States"
     - "Remote"
-  min_activity_days: 7  # Recruiters active in last N days
+  min_activity_days: 7 # Recruiters active in last N days
   max_results_per_search: 50
   ranking_factors:
     - "recent_activity"
@@ -62,9 +62,9 @@ job_discovery:
 messaging:
   max_messages_per_day: 10
   message_templates_dir: "./templates"
-  personalization_level: "high"  # low, medium, high
+  personalization_level: "high" # low, medium, high
   include_resume_request: true
-  tone: "professional"  # professional, friendly, casual
+  tone: "professional" # professional, friendly, casual
 
 # Application Assistance
 application:
@@ -76,16 +76,16 @@ application:
 # Safety & Rate Limiting
 safety:
   max_actions_per_day: 20
-  min_delay_between_actions: 300  # seconds
-  max_delay_between_actions: 900  # seconds
+  min_delay_between_actions: 300 # seconds
+  max_delay_between_actions: 900 # seconds
   stop_on_captcha: true
   stop_on_otp: true
   human_approval_required: true
-  
+
 # Browser Settings
 browser:
-  headless: false  # Always false for human-like behavior
-  slow_mo: 100  # milliseconds delay between actions
+  headless: false # Always false for human-like behavior
+  slow_mo: 100 # milliseconds delay between actions
   viewport_width: 1920
   viewport_height: 1080
   user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -99,9 +99,8 @@ logging:
 
 # AI/LLM Configuration (optional)
 ai:
-  provider: "openai"  # openai, anthropic, local
-  model: "gpt-4-turbo-preview"
-  api_key: ""  # Set via environment variable OPENAI_API_KEY
+  provider: "openai" # openai, anthropic, local
+  model: "gpt-4o-mini"
+  api_key: ${OPENAI_API_KEY} # Loaded from .env
   temperature: 0.7
   max_tokens: 500
-
